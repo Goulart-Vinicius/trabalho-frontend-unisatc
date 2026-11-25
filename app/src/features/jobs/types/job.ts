@@ -35,7 +35,7 @@ export interface IJobsContext {
   toggleType: (type: string) => void;
   toggleArea: (area: string) => void;
   setSearchQuery: (query: string) => void;
-  addJob: (newJob: Omit<IJob, "id">) => Promise<void>;
+  addJob: (newJob: Omit<IJob, "id">) => void;
   clearFilters: () => void;
   handleApply: (job: IJob) => void;
 }

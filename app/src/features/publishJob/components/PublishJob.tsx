@@ -5,34 +5,30 @@ import { PublishJobForm } from "./PublishJobForm";
 import { PublishJobSuccess } from "./PublishJobSuccess";
 import type { IPublishJobForm } from "../types/publish-job";
 import { Link } from "react-router";
-import { useAddJob } from "../hooks/useAddJob";
+import { useJobsContext } from "../../jobs/hooks/useJobsContext";
 
 export const PublishJob: FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedData, setSubmittedData] = useState<IPublishJobForm | null>(
     null,
   );
-  const { addJob } = useAddJob();
+  const { addJob } = useJobsContext();
 
   const { register, handleSubmit, errors, isSubmitting } = usePublishJobForm(
-    async (data) => {
-      try {
-        const newJob = {
-          company: data.company,
-          role: data.role,
-          area: data.area,
-          description: data.description,
-          publishedAt: "Agora",
-          salary: data.salary,
-          type: data.type,
-          workplaceType: data.workplaceType,
-        };
-        await addJob(newJob);
-        setSubmittedData(data);
-        setIsSubmitted(true);
-      } catch (err) {
-        alert(err instanceof Error ? err.message : "Erro ao publicar vaga.");
-      }
+    (data) => {
+      const newJob = {
+        company: data.company,
+        role: data.role,
+        area: data.area,
+        description: data.description,
+        publishedAt: "Agora",
+        salary: data.salary,
+        type: data.type,
+        workplaceType: data.workplaceType,
+      };
+      addJob(newJob);
+      setSubmittedData(data);
+      setIsSubmitted(true);
     },
   );
 
