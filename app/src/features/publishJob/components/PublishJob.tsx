@@ -5,14 +5,14 @@ import { PublishJobForm } from "./PublishJobForm";
 import { PublishJobSuccess } from "./PublishJobSuccess";
 import type { IPublishJobForm } from "../types/publish-job";
 import { Link } from "react-router";
-import { useJobsContext } from "../../jobs/hooks/useJobsContext";
+import { useAddJob } from "../hooks/useAddJob";
 
 export const PublishJob: FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedData, setSubmittedData] = useState<IPublishJobForm | null>(
     null,
   );
-  const { addJob } = useJobsContext();
+  const { addJob } = useAddJob();
 
   const { register, handleSubmit, errors, isSubmitting } = usePublishJobForm(
     async (data) => {

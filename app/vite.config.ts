@@ -19,70 +19,64 @@ export default defineConfig({
           "/api/vagas",
           async (
             req: http.IncomingMessage,
-            res: http.ServerResponse
+            res: http.ServerResponse,
+            next: any,
           ) => {
             if (req.method === "GET") {
-              // Deixa o servidor estático do Vite servir o arquivo JSON normalmente
-              res.statusCode = 200;
-              res.setHeader("Content-Type", "application/json");
-              const filePath = path.resolve(
-                process.cwd(),
-                "public/api/vagas.json"
-              );
-              const content = fs.readFileSync(filePath, "utf-8");
-              res.end(content);
+              next();
               return;
             }
 
             if (req.method !== "POST") {
-            res.statusCode = 405;
-            res.setHeader("Content-Type", "application/json");
-            res.end(JSON.stringify({ error: "Método não permitido" }));
-            return;
-          }
+              res.statusCode = 405;
+              res.setHeader("Content-Type", "application/json");
+              res.end(JSON.stringify({ error: "Método não permitido" }));
+              return;
+            }
 
-          let body = "";
-          for await (const chunk of req) {
-            body += chunk as string;
-          }
+            let body = "";
+            for await (const chunk of req) {
+              body += chunk as string;
+            }
 
-          let newJob: Record<string, unknown>;
-          try {
-            newJob = JSON.parse(body);
-          } catch {
-            res.statusCode = 400;
-            res.setHeader("Content-Type", "application/json");
-            res.end(JSON.stringify({ error: "JSON inválido" }));
-            return;
-          }
+            let newJob: Record<string, unknown>;
+            try {
+              newJob = JSON.parse(body);
+            } catch {
+              res.statusCode = 400;
+              res.setHeader("Content-Type", "application/json");
+              res.end(JSON.stringify({ error: "JSON inválido" }));
+              return;
+            }
 
-          const filePath = path.resolve(
-            process.cwd(),
-            "public/api/vagas.json"
-          );
-
-          try {
-            const current = JSON.parse(
-              fs.readFileSync(filePath, "utf-8")
-            ) as Record<string, unknown>[];
-
-            const updated = [...current, newJob];
-            fs.writeFileSync(filePath, JSON.stringify(updated, null, 2));
-
-            res.statusCode = 200;
-            res.setHeader("Content-Type", "application/json");
-            res.end(JSON.stringify({ success: true, job: newJob }));
-          } catch (err) {
-            res.statusCode = 500;
-            res.setHeader("Content-Type", "application/json");
-            res.end(
-              JSON.stringify({
-                error: "Não foi possível salvar a vaga",
-                detail: err instanceof Error ? err.message : String(err),
-              })
+            const filePath = path.resolve(
+              process.cwd(),
+              "public/api/vagas.json",
             );
-          }
-        });
+
+            try {
+              const current = JSON.parse(
+                fs.readFileSync(filePath, "utf-8"),
+              ) as Record<string, unknown>[];
+
+              const updated = [...current, newJob];
+              fs.writeFileSync(filePath, JSON.stringify(updated, null, 2));
+
+              res.statusCode = 200;
+              res.setHeader("Content-Type", "application/json");
+              res.end(JSON.stringify({ success: true, job: newJob }));
+            } catch (err) {
+              res.statusCode = 500;
+              res.setHeader("Content-Type", "application/json");
+              res.end(
+                JSON.stringify({
+                  error: "Não foi possível salvar a vaga",
+                  detail: err instanceof Error ? err.message : String(err),
+                }),
+              );
+            }
+          },
+        );
       },
     },
   ],
