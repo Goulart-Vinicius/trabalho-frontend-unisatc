@@ -1,5 +1,10 @@
 import { useCallback, useMemo, useState, type FC } from "react";
-import { type IJob, type IJobType, type IJobArea, type IJobsProviderProps } from "../types/job";
+import {
+  type IJob,
+  type IJobType,
+  type IJobArea,
+  type IJobsProviderProps,
+} from "../types/job";
 import { useJobs } from "../hooks/useJobs";
 import { JobsContext } from "./JobsContext";
 import { deriveOptions } from "../utils/deriveOptions";
@@ -17,6 +22,7 @@ export const JobsProvider: FC<IJobsProviderProps> = ({ children }) => {
 
   const [selectedTypes, setSelectedTypes] = useState<IJobType[]>([]);
   const [selectedAreas, setSelectedAreas] = useState<IJobArea[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const areaOptions = useMemo(() => deriveOptions(jobs, (j) => j.area), [jobs]);
   const typeOptions = useMemo(() => deriveOptions(jobs, (j) => j.type), [jobs]);
@@ -34,20 +40,26 @@ export const JobsProvider: FC<IJobsProviderProps> = ({ children }) => {
   const clearFilters = useCallback(() => {
     setSelectedTypes([]);
     setSelectedAreas([]);
+    setSearchQuery("");
   }, []);
 
   const filteredJobs = useMemo(() => {
     const types = new Set(selectedTypes);
     const areas = new Set(selectedAreas);
+    const searchLower = searchQuery.trim().toLowerCase();
 
     return jobs.filter(
       (job) =>
         (types.size === 0 || types.has(job.type)) &&
-        (areas.size === 0 || areas.has(job.area)),
+        (areas.size === 0 || areas.has(job.area)) &&
+        (searchLower === "" || job.role.toLowerCase().includes(searchLower)),
     );
-  }, [jobs, selectedTypes, selectedAreas]);
+  }, [jobs, selectedTypes, selectedAreas, searchQuery]);
 
-  const hasActiveFilters = selectedTypes.length > 0 || selectedAreas.length > 0;
+  const hasActiveFilters =
+    selectedTypes.length > 0 ||
+    selectedAreas.length > 0 ||
+    searchQuery.trim().length > 0;
 
   const value = useMemo(
     () => ({
@@ -57,11 +69,13 @@ export const JobsProvider: FC<IJobsProviderProps> = ({ children }) => {
       error,
       selectedTypes,
       selectedAreas,
+      searchQuery,
       areaOptions,
       typeOptions,
       hasActiveFilters,
       toggleType,
       toggleArea,
+      setSearchQuery,
       clearFilters,
       handleApply,
     }),
@@ -72,6 +86,7 @@ export const JobsProvider: FC<IJobsProviderProps> = ({ children }) => {
       error,
       selectedTypes,
       selectedAreas,
+      searchQuery,
       areaOptions,
       typeOptions,
       hasActiveFilters,

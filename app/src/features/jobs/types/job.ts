@@ -28,11 +28,13 @@ export interface IJobsContext {
   error: string | null;
   selectedTypes: string[];
   selectedAreas: string[];
+  searchQuery: string;
   typeOptions: IDerivedOption[];
   areaOptions: IDerivedOption[];
   hasActiveFilters: boolean;
   toggleType: (type: string) => void;
   toggleArea: (area: string) => void;
+  setSearchQuery: (query: string) => void;
   clearFilters: () => void;
   handleApply: (job: IJob) => void;
 }

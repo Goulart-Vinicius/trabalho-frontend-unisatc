@@ -1,6 +1,6 @@
 import { type FC } from "react";
 import { Link } from "react-router";
-import { Button } from "../ui/Button";
+import { Button } from "../shared/ui/Button";
 
 export const NotFound: FC = () => {
   return (
@@ -16,7 +16,8 @@ export const NotFound: FC = () => {
           Página não encontrada
         </h1>
         <p className="text-base text-[#5f6774] mb-8">
-          A página que você está procurando não existe ou foi movida para outro endereço.
+          A página que você está procurando não existe ou foi movida para outro
+          endereço.
         </p>
         <Link to="/">
           <Button variant="cobalt" size="lg">

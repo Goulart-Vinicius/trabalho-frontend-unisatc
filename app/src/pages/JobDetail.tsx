@@ -1,13 +1,13 @@
 import { useEffect, useState, type FC } from "react";
 import { useParams, Link, useNavigate } from "react-router";
-import { Button } from "../ui/Button";
-import type { Job } from "../components/Jobs";
+import { Button } from "../shared/ui/Button";
+import type { IJob } from "../features/jobs/types/job";
 
 export const JobDetail: FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [job, setJob] = useState<Job | null>(null);
-  const [allJobs, setAllJobs] = useState<Job[]>([]);
+  const [job, setJob] = useState<IJob | null>(null);
+  const [allJobs, setAllJobs] = useState<IJob[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -15,22 +15,22 @@ export const JobDetail: FC = () => {
     const fetchJob = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("/vagas.json");
+        const response = await fetch("/api/vagas.json");
 
         if (!response.ok) {
           throw new Error("Não foi possível carregar as vagas.");
         }
 
-        const jobs: Job[] = await response.json();
+        const jobs: IJob[] = await response.json();
         setAllJobs(jobs);
-        const foundJob = jobs.find((j) => j.id === id);
+        const foundJob = jobs.find((j) => String(j.id) === id);
 
         if (!foundJob) {
           setNotFound(true);
         } else {
           setJob(foundJob);
         }
-      } catch (err) {
+      } catch {
         setNotFound(true);
       } finally {
         setIsLoading(false);
@@ -41,7 +41,7 @@ export const JobDetail: FC = () => {
   }, [id]);
 
   // Navegação entre vagas
-  const currentIndex = allJobs.findIndex((j) => j.id === id);
+  const currentIndex = allJobs.findIndex((j) => String(j.id) === id);
   const hasPrevious = currentIndex > 0;
   const hasNext = currentIndex < allJobs.length - 1;
 
@@ -100,7 +100,7 @@ export const JobDetail: FC = () => {
   }
 
   const handleApply = () => {
-    alert(`Candidatura aberta para ${job.title} na ${job.company}!`);
+    alert(`Candidatura aberta para ${job.role} na ${job.company}!`);
   };
 
   return (
@@ -150,23 +150,29 @@ export const JobDetail: FC = () => {
         <div className="flex items-start gap-6 mb-6">
           <div
             aria-hidden="true"
-            className={`w-16 h-16 rounded flex items-center justify-center shrink-0 ${
-              job.avatarBg || "bg-[#0e1013]"
-            } text-white font-bold text-xl shadow-sm`}
+            className={`w-16 h-16 rounded flex items-center justify-center shrink-0 ${"bg-[#0e1013]"} text-white font-bold text-xl shadow-sm`}
           >
-            {job.avatarText}
+            {job.company.charAt(0)}
           </div>
 
           <div className="flex-1 min-w-0">
             <h1 className="text-3xl font-bold text-[#0e1013] mb-2">
-              {job.title}
+              {job.role}
             </h1>
             <div className="flex flex-wrap items-center gap-3 text-sm">
-              <span className="font-semibold text-[#0e1013]">{job.company}</span>
-              <span aria-hidden="true" className="text-[#5f6774]">•</span>
-              <span className="text-[#5f6774]">{job.location}</span>
-              <span aria-hidden="true" className="text-[#5f6774]">•</span>
-              <span className="text-[#5f6774] font-mono">{job.timeAgo}</span>
+              <span className="font-semibold text-[#0e1013]">
+                {job.company}
+              </span>
+              <span aria-hidden="true" className="text-[#5f6774]">
+                •
+              </span>
+              <span className="text-[#5f6774]">{job.workplaceType}</span>
+              <span aria-hidden="true" className="text-[#5f6774]">
+                •
+              </span>
+              <span className="text-[#5f6774] font-mono">
+                {job.publishedAt}
+              </span>
             </div>
           </div>
         </div>
@@ -191,71 +197,8 @@ export const JobDetail: FC = () => {
             Sobre a vaga
           </h2>
           <div className="text-[#5f6774] space-y-3">
-            <p>
-              Estamos procurando um profissional talentoso para se juntar ao nosso time em{" "}
-              <strong className="text-[#0e1013]">{job.company}</strong>. Esta é uma
-              oportunidade única para trabalhar com tecnologias de ponta e fazer parte de
-              uma equipe inovadora.
-            </p>
-            <p>
-              A posição é <strong className="text-[#0e1013]">{job.location}</strong>,
-              oferecendo flexibilidade e autonomia para você fazer seu melhor trabalho.
-            </p>
+            <p>{job.description}</p>
           </div>
-        </section>
-
-        {/* Requirements */}
-        <section>
-          <h2 className="text-xl font-bold text-[#0e1013] mb-4">
-            Requisitos
-          </h2>
-          <ul className="space-y-2 text-[#5f6774]">
-            <li className="flex items-start gap-2">
-              <span className="text-[#0047ff] mt-1">•</span>
-              <span>Experiência sólida com as principais tecnologias da área</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-[#0047ff] mt-1">•</span>
-              <span>Habilidade de trabalhar de forma autônoma e em equipe</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-[#0047ff] mt-1">•</span>
-              <span>Comunicação clara e objetiva</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-[#0047ff] mt-1">•</span>
-              <span>Vontade de aprender e crescer continuamente</span>
-            </li>
-          </ul>
-        </section>
-
-        {/* Benefits */}
-        <section>
-          <h2 className="text-xl font-bold text-[#0e1013] mb-4">
-            Benefícios
-          </h2>
-          <ul className="space-y-2 text-[#5f6774]">
-            <li className="flex items-start gap-2">
-              <span className="text-[#0047ff] mt-1">✓</span>
-              <span>Salário competitivo: <strong className="text-[#0e1013]">{job.salary}</strong></span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-[#0047ff] mt-1">✓</span>
-              <span>Trabalho remoto com flexibilidade de horários</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-[#0047ff] mt-1">✓</span>
-              <span>Plano de saúde e odontológico</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-[#0047ff] mt-1">✓</span>
-              <span>Orçamento para educação e desenvolvimento</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-[#0047ff] mt-1">✓</span>
-              <span>Ambiente de trabalho inclusivo e colaborativo</span>
-            </li>
-          </ul>
         </section>
 
         {/* CTA */}
