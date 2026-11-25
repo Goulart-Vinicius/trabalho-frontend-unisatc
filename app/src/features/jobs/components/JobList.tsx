@@ -4,7 +4,7 @@ import { JobsEmptyState } from "./JobsEmptyState";
 import { useJobsContext } from "../hooks/useJobsContext";
 
 export const JobList: FC = () => {
-  const { filteredJobs, handleApply } = useJobsContext();
+  const { filteredJobs } = useJobsContext();
 
   return (
     <>
@@ -17,7 +17,7 @@ export const JobList: FC = () => {
       ) : (
         <div className="flex flex-col divide-y divide-[#e2e5e9] border border-[#e2e5e9] rounded-lg bg-white overflow-hidden">
           {filteredJobs.map((job) => (
-            <JobCard key={job.id} job={job} onApply={handleApply} />
+            <JobCard key={job.id} job={job} />
           ))}
         </div>
       )}

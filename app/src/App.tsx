@@ -15,6 +15,12 @@ const NotFound = lazy(() =>
   import("./pages/NotFound").then((module) => ({ default: module.NotFound })),
 );
 
+const PublishJobPage = lazy(() =>
+  import("./pages/PublishJobPage").then((module) => ({
+    default: module.PublishJobPage,
+  })),
+);
+
 export const App: FC = () => {
   return (
     <Routes>
@@ -50,6 +56,23 @@ export const App: FC = () => {
               }
             >
               <JobDetail />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/publish"
+          element={
+            <Suspense
+              fallback={
+                <div
+                  aria-busy="true"
+                  className="py-20 text-center text-sm text-[#777777]"
+                >
+                  Carregando conteúdo...
+                </div>
+              }
+            >
+              <PublishJobPage />
             </Suspense>
           }
         />
