@@ -1,6 +1,7 @@
 import { lazy, Suspense, type FC } from "react";
 import { Routes, Route } from "react-router";
 import { Layout } from "./shared/components/Layout";
+import { JobsProvider } from "./features/jobs/context/JobsProvider";
 
 // Carregamento dinâmico de páginas sob demanda com fallback visual
 const Home = lazy(() =>
@@ -23,8 +24,9 @@ const PublishJobPage = lazy(() =>
 
 export const App: FC = () => {
   return (
-    <Routes>
-      <Route element={<Layout />}>
+    <JobsProvider>
+      <Routes>
+        <Route element={<Layout />}>
         <Route
           path="/"
           element={
@@ -95,5 +97,6 @@ export const App: FC = () => {
         />
       </Route>
     </Routes>
+    </JobsProvider>
   );
 };
