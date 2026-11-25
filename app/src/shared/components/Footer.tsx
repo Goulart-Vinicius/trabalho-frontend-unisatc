@@ -11,28 +11,16 @@ export const Footer: FC = () => {
         </div>
 
         <nav className="flex flex-wrap items-center gap-6" aria-label="Links do rodapé">
-          <a
-            href="#link-entrar"
-            className="hover:text-[#0e1013] transition-colors"
-          >
+          <a href="#link-entrar" className="hover:text-[#0e1013] transition-colors">
             Entrar
           </a>
-          <a
-            href="#btn-hero"
-            className="hover:text-[#0e1013] transition-colors"
-          >
+          <a href="#btn-hero" className="hover:text-[#0e1013] transition-colors">
             Publicar vaga
           </a>
-          <a
-            href="#vagas"
-            className="hover:text-[#0e1013] transition-colors"
-          >
+          <a href="#vagas" className="hover:text-[#0e1013] transition-colors">
             Vagas abertas
           </a>
-          <a
-            href="#newsletter-title"
-            className="hover:text-[#0e1013] transition-colors"
-          >
+          <a href="#newsletter-title" className="hover:text-[#0e1013] transition-colors">
             Newsletter
           </a>
         </nav>

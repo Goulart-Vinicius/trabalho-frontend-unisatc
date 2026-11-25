@@ -1,6 +1,6 @@
 import type { FC, ButtonHTMLAttributes } from "react";
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline" | "cobalt" | "ghost";
   size?: "sm" | "md" | "lg";
 }
@@ -23,7 +23,7 @@ const VARIANTS = {
   ghost: "bg-transparent text-[#0e1013] hover:bg-[#e2e5e9]/50",
 };
 
-export const Button: FC<ButtonProps> = ({
+export const Button: FC<IButtonProps> = ({
   type = "button",
   variant = "primary",
   size = "md",
