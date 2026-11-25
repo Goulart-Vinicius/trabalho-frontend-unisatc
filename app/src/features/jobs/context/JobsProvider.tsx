@@ -18,7 +18,7 @@ const toggleInList = <T,>(list: T[], item: T): T[] =>
   list.includes(item) ? list.filter((v) => v !== item) : [...list, item];
 
 export const JobsProvider: FC<IJobsProviderProps> = ({ children }) => {
-  const { jobs, loading, error } = useJobs();
+  const { jobs, loading, error, addJob } = useJobs();
 
   const [selectedTypes, setSelectedTypes] = useState<IJobType[]>([]);
   const [selectedAreas, setSelectedAreas] = useState<IJobArea[]>([]);
@@ -70,6 +70,7 @@ export const JobsProvider: FC<IJobsProviderProps> = ({ children }) => {
       selectedTypes,
       selectedAreas,
       searchQuery,
+      addJob,
       areaOptions,
       typeOptions,
       hasActiveFilters,
@@ -87,6 +88,7 @@ export const JobsProvider: FC<IJobsProviderProps> = ({ children }) => {
       selectedTypes,
       selectedAreas,
       searchQuery,
+      addJob,
       areaOptions,
       typeOptions,
       hasActiveFilters,

@@ -86,5 +86,15 @@
     "area": "Gestão",
     "publishedAt": "2d",
     "description": "Otimização de processos operacionais e suporte a lançamentos estratégicos de novas contas corporativas."
+  },
+  {
+    "company": "Test",
+    "role": "testy",
+    "area": "Design",
+    "description": "qeweqwe",
+    "publishedAt": "Agora",
+    "salary": "12",
+    "type": "Efetivo",
+    "workplaceType": "Remoto"
   }
 ]

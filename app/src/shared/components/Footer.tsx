@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import { Link } from "react-router";
 
 export const Footer: FC = () => {
   return (
@@ -10,19 +11,28 @@ export const Footer: FC = () => {
           <span>O índice aberto de contratações em startups</span>
         </div>
 
-        <nav className="flex flex-wrap items-center gap-6" aria-label="Links do rodapé">
-          <a href="#link-entrar" className="hover:text-[#0e1013] transition-colors">
+        <nav
+          className="flex flex-wrap items-center gap-6"
+          aria-label="Links do rodapé"
+        >
+          <Link to="#login" className="hover:text-[#0e1013] transition-colors">
             Entrar
-          </a>
-          <a href="#btn-hero" className="hover:text-[#0e1013] transition-colors">
+          </Link>
+          <Link
+            to="/publish"
+            className="hover:text-[#0e1013] transition-colors"
+          >
             Publicar vaga
-          </a>
-          <a href="#vagas" className="hover:text-[#0e1013] transition-colors">
+          </Link>
+          <Link to="#vagas" className="hover:text-[#0e1013] transition-colors">
             Vagas abertas
-          </a>
-          <a href="#newsletter-title" className="hover:text-[#0e1013] transition-colors">
+          </Link>
+          <Link
+            to="#newsletter-title"
+            className="hover:text-[#0e1013] transition-colors"
+          >
             Newsletter
-          </a>
+          </Link>
         </nav>
       </div>
     </footer>

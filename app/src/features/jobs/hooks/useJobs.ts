@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { type IJob } from "../types/job";
+
+const STORAGE_KEY = "openboard:published-jobs";
 
 export const useJobs = () => {
   const [jobs, setJobs] = useState<IJob[]>([]);
@@ -18,7 +20,11 @@ export const useJobs = () => {
         }
         const data = await response.json();
         if (isMounted && Array.isArray(data)) {
-          setJobs(data);
+          // Mescla vagas da API com vagas publicadas salvas no localStorage
+          const saved = JSON.parse(
+            localStorage.getItem(STORAGE_KEY) || "[]"
+          ) as IJob[];
+          setJobs([...data, ...saved]);
         }
       } catch (err) {
         if (isMounted) {
@@ -38,5 +44,25 @@ export const useJobs = () => {
     };
   }, []);
 
-  return { jobs, loading, error };
+  const addJob = useCallback(
+    (newJob: Omit<IJob, "id">) => {
+      const jobWithId: IJob = {
+        ...newJob,
+        id: Date.now(),
+      };
+
+      // Adiciona ao estado atual
+      setJobs((prev) => [...prev, jobWithId]);
+
+      // Salva apenas as vagas publicadas pelo usuário no localStorage
+      const saved = JSON.parse(
+        localStorage.getItem(STORAGE_KEY) || "[]"
+      ) as IJob[];
+      const updated = [...saved, jobWithId];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    },
+    []
+  );
+
+  return { jobs, loading, error, addJob };
 };
