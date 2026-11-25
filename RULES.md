@@ -17,18 +17,68 @@ Todos os identificadores no código devem ser escritos obrigatoriamente em **ing
 - **Componentes**: `Jobs`, `Header`, `Hero`, `Testimonials`, `Newsletter`, `Footer`, `Button`, `Layout`, etc.
 - **Funções e Métodos**: `toggleType`, `toggleArea`, `clearFilters`, `handleApply`, `handleSubmit`, `handleLoginClick`.
 - **Hooks e Estados**: `selectedTypes`, `selectedAreas`, `isPending`, `startTransition`, `email`, `subscribed`, `error`.
-- **Tipos, Interfaces e Enums**: `Job`, `JobType`, `JobArea`, `ButtonProps`, `Testimonial`.
+- **Tipos, Interfaces e Enums**: `IJob`, `IJobType`, `IJobArea`, `IButtonProps`, `ITestimonial`.
 - **Objetos, Constantes e Mappings**: `INITIAL_JOBS`, `TYPE_OPTIONS`, `AREA_OPTIONS`, `AREA_COUNTS`, `TYPE_LABELS`, `BASE_STYLES`, `VARIANTS`, `SIZES`.
-- **Arquivos e Pastas**: `Jobs.tsx`, `Newsletter.tsx`, `Testimonials.tsx`, `Home.tsx`.
+- **Arquivos e Pastas**: `Jobs/`, `Testimonials/`, `JobCard.tsx`, `Newsletter.tsx`, `Home.tsx`.
 
-### 1.2 Convenções de Caixa (Casing)
+### 1.2 Convenções de Caixa e Nomenclatura (Casing & Prefixes)
 
-- **Componentes e Tipos/Interfaces**: `PascalCase` (`Jobs.tsx`, `interface Job`).
-- **Funções, Métodos, Variáveis e Hooks**: `camelCase` (`toggleType`, `clearFilters`, `hasActiveFilters`).
+- **Interfaces (Prefixo Obrigatório `I`)**: Todas as interfaces TypeScript devem obrigatoriamente iniciar com o prefixo `I` em `PascalCase` (`IJob`, `ITestimonial`, `IButtonProps`, `IJobCardProps`, `IFilterOption`).
+- **Componentes e Tipos (`type`)**: `PascalCase` (`JobCard.tsx`, `type IJobType = ...`).
+- **Funções, Métodos, Variáveis e Hooks**: `camelCase` (`toggleType`, `clearFilters`, `hasActiveFilters`, `useJobs`).
 - **Constantes Globais/Módulo**: `UPPER_SNAKE_CASE` (`INITIAL_JOBS`, `AREA_OPTIONS`, `AREA_COUNTS`).
-- **Diretórios**: `kebab-case` ou `camelCase` minúsculo (`components/`, `pages/`, `ui/`).
+- **Diretórios de Features**: `camelCase` para pastas de feature (`features/jobs/`, `features/newsletter/`) e suas subpastas funcionais (`components/`, `hooks/`, `types/`, `utils/`, `context/`, `data/`). Componentes dentro de features usam `PascalCase` (`JobCard.tsx`, `JobFiltersSidebar.tsx`). Componentes de design system ficam em `shared/ui/` e layout global em `shared/components/`.
 
-### 1.3 Conteúdo do Usuário (UI / Copy em Português)
+### 1.3 Arquitetura de Componentes — Feature Folders
+
+O projeto adota o padrão **Feature Folders**: cada domínio de negócio é uma "ilha" autossuficiente dentro de `src/features/`. Código verdadeiramente global fica em `src/shared/`.
+
+#### Regras inegociáveis da arquitetura
+
+1. **Features são ilhas isoladas**:
+   - Uma feature **nunca importa diretamente** de outra feature (`jobs/` não importa de `newsletter/`).
+   - Se dois domínios precisarem compartilhar algo, o artefato sobe para `src/shared/`.
+
+2. **`index.ts` é a única fronteira pública**:
+   - Fora de uma feature, importa-se exclusivamente via `index.ts` da mesma.
+   - ✅ `import { Jobs } from "../features/jobs"`
+   - ❌ `import { JobCard } from "../features/jobs/components/JobCard"` (caminho interno)
+
+3. **Tipos e dados pertencem à feature**:
+   - Interfaces, tipos e dados mockados vivem **dentro** da feature que os usa (`types/`, `data/`).
+   - Não existem pastas globais `interfaces/`, `data/` ou `utils/` na raiz de `src/`.
+
+4. **Componentização Atômica dentro de cada feature**:
+   - Cada subcomponente tem responsabilidade única e bem definida (ex: `JobCard.tsx`, `JobFiltersSidebar.tsx`, `JobList.tsx`, `JobsEmptyState.tsx`).
+   - Lógica de estado/efeito fica em hooks dedicados (`hooks/`), nunca misturada ao JSX.
+   - Context API (`context/`) é usada dentro da feature para evitar prop drilling.
+
+5. **`src/shared/` para o design system e layout**:
+   - `shared/ui/` → componentes atômicos sem estado de negócio (`Button`, `Badge`, `FilterGroup`).
+   - `shared/components/` → componentes de layout global (`Header`, `Footer`, `Hero`, `Layout`).
+   - Componentes em `shared/` **podem** importar de `shared/ui/`, mas **nunca** de `features/`.
+
+#### Estrutura de referência de uma feature
+
+```
+features/jobs/
+├── components/   # Componentes React (apenas JSX + consumo de hooks/contexto)
+├── context/      # Context + Provider (compartilhamento de estado interno)
+├── hooks/        # Custom hooks (fetch, lógica, derivações)
+├── types/        # Interfaces e tipos TypeScript (prefixo I obrigatório)
+├── utils/        # Funções puras sem efeitos colaterais
+└── index.ts      # Única exportação pública da feature
+```
+
+#### Adicionando uma nova feature
+
+```bash
+mkdir -p src/features/companies/{components,hooks,types}
+# Crie os arquivos dentro — sem tocar em nada de jobs/ ou newsletter/
+# Exporte apenas o necessário via src/features/companies/index.ts
+```
+
+### 1.4 Conteúdo do Usuário (UI / Copy em Português)
 
 - Textos visíveis na tela, botões, labels, mensagens de sucesso, mensagens de erro e atributos acessíveis destinados ao leitor de tela (ex: `aria-label`) devem permanecer em **Português do Brasil (`pt-BR`)**.
 - Exemplo:
@@ -59,8 +109,10 @@ O projeto segue rigorosamente o catálogo oficial de performance da Vercel:
 3. **Performance de Renderização no Navegador (`rendering-`)**:
    - **`content-visibility: auto`**: Aplicar `[content-visibility:auto] [contain-intrinsic-size:96px]` em listas ou feeds para evitar cálculos desnecessários de layout e pintura fora da viewport.
    - **Operador Ternário Estrito**: Para renderizações condicionais, use ternário (`condition ? <Component /> : null`), evitando a armadilha do `0` renderizado na tela ao usar `&&`.
+   - **Proibição de Ternários Aninhados (`no-nested-ternary` / `typescript:S3358`)**: *Ternary operators should not be nested*. É estritamente proibido aninhar operadores ternários (`cond1 ? a : cond2 ? b : c`). Extraia a lógica para uma instrução ou variável independente antes do retorno (*"Extract this nested ternary operation into an independent statement"*).
 
-4. **Performance de JavaScript (`js-`)**:
+4. **Performance de JavaScript & Boas Práticas (`js-`)**:
+   - **Proibição de APIs Obsoletas (`typescript:S1874`)**: *Deprecated APIs should not be used*. Nunca utilize métodos, funções, propriedades ou tipos marcados como deprecated pelo TypeScript, React ou bibliotecas externas. Utilize as alternativas modernas recomendadas.
    - **Lookups $O(1)$ com `Set` / `Map`**: Para comparações e filtros de múltiplos itens, converta arrays em `Set` antes de iterar, evitando buscas lineares $O(N)$ repetitivas.
    - **Saída Precoce (`js-early-exit`)**: Em filtros e predicados, retorne imediatamente `false` no primeiro critério não satisfeito.
    - **Hoisting Estático**: Constantes, estilos base, dicionários e contagens estáticas devem ser declarados fora do corpo dos componentes, no nível do módulo.
@@ -71,7 +123,10 @@ O projeto segue rigorosamente o catálogo oficial de performance da Vercel:
 
 A acessibilidade é requisito inegociável em todos os componentes:
 
-1. **Formulários**:
+1. **HTML Semântico sobre ARIA (`typescript:S6819`)**:
+   - *Prefer tag over ARIA role*: Sempre prefira elementos HTML semânticos nativos (`<button>`, `<nav>`, `<aside>`, `<main>`, `<article>`, `<header>`, `<footer>`, `<dialog>`) em vez de aplicar atributos `role="..."` equivalentes em elementos genéricos como `<div>` ou `<span>`. Use `role` apenas quando o HTML5 nativo não oferecer um elemento equivalente (ex: `role="status"` ou `role="feed"`).
+
+2. **Formulários**:
    - Todo `<input>` deve ter um `<label>` explicitamente conectado via `htmlFor` e `id`. Se visualmente oculto, use a classe `sr-only`.
    - Campos obrigatórios devem declarar `aria-required="true"`.
    - Mensagens de erro devem ser vinculadas ao campo via `aria-describedby` e possuir `role="alert"`. O input em estado de erro deve receber `aria-invalid="true"`.

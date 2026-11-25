@@ -60,32 +60,43 @@ O projeto foi construído utilizando as seguintes ferramentas e bibliotecas:
 
 ## 📂 Estrutura do Projeto
 
-A organização dos arquivos e pastas segue o padrão de componentes modulares:
+A organização segue o padrão **Feature Folders**: cada domínio de negócio contém seus próprios componentes, hooks, tipos e utilitários. Componentes globais (layout, design system) vivem em `shared/`.
 
 ```text
 trabalho-frontend-unisatc/
 └── app/
-    ├── public/                # Arquivos estáticos e ícones
+    ├── public/                        # Arquivos estáticos e ícones
     ├── src/
-    │   ├── components/        # Componentes de seção da página
-    │   │   ├── Depoimentos.tsx # Seção de depoimentos de usuários
-    │   │   ├── Footer.tsx     # Rodapé com links e direitos autorais
-    │   │   ├── Header.tsx     # Cabeçalho com logo e ações rápidas
-    │   │   ├── Hero.tsx       # Seção principal de apresentação e CTA
-    │   │   ├── Layout.tsx     # Shell com Header, Outlet e Footer
-    │   │   ├── News.tsx       # Seção de captura de leads / newsletter
-    │   │   └── Vagas.tsx      # Listagem, filtros e cards de oportunidades
-    │   ├── pages/             # Telas da aplicação
-    │   │   └── Home.tsx       # Página inicial composta pelas seções
-    │   ├── ui/                # Componentes atômicos reutilizáveis
-    │   │   └── Button.tsx     # Botão genérico com variantes (primary, secondary, outline)
-    │   ├── App.tsx            # Definição das rotas da aplicação
-    │   ├── index.css          # Configurações globais e importação do Tailwind CSS
-    │   └── main.tsx           # Ponto de entrada (Entry point) com BrowserRouter
-    ├── index.html             # Template HTML principal
-    ├── package.json           # Dependências e scripts do projeto
-    ├── tsconfig.json          # Configurações do compilador TypeScript
-    └── vite.config.ts         # Configuração dos plugins do Vite (React, Babel e Tailwind)
+    │   ├── features/                  # Domínios de negócio (ilhas independentes)
+    │   │   ├── jobs/
+    │   │   │   ├── components/        # Jobs, JobCard, JobList, JobFiltersSidebar, JobsEmptyState
+    │   │   │   ├── context/           # JobsContext, JobsProvider
+    │   │   │   ├── hooks/             # useJobs, useJobsContext
+    │   │   │   ├── types/             # job.ts (IJob, IJobsContext, IFilterOption)
+    │   │   │   ├── utils/             # deriveOptions.ts
+    │   │   │   └── index.ts           # Exporta apenas { Jobs }
+    │   │   ├── newsletter/
+    │   │   │   ├── components/        # Newsletter, NewsletterForm, NewsletterHeader, NewsletterSuccess
+    │   │   │   ├── hooks/             # useNewsletterForm
+    │   │   │   └── index.ts           # Exporta apenas { Newsletter }
+    │   │   └── testimonials/
+    │   │       ├── components/        # Testimonials, TestimonialCard
+    │   │       ├── data/              # testimonials.ts
+    │   │       ├── hooks/             # useTestimonials
+    │   │       ├── types/             # testimonial.ts
+    │   │       └── index.ts           # Exporta apenas { Testimonials }
+    │   ├── shared/                    # Código verdadeiramente global
+    │   │   ├── components/            # Header, Footer, Hero, Layout
+    │   │   └── ui/                    # Badge, Button, FilterGroup
+    │   ├── pages/                     # Telas da aplicação
+    │   │   └── Home.tsx               # Orquestra features via index.ts de cada uma
+    │   ├── App.tsx                    # Definição de rotas e lazy loading
+    │   ├── index.css                  # Configurações globais e importação do Tailwind CSS
+    │   └── main.tsx                   # Ponto de entrada com BrowserRouter
+    ├── index.html                     # Template HTML principal
+    ├── package.json                   # Dependências e scripts do projeto
+    ├── tsconfig.json                  # Configurações do compilador TypeScript
+    └── vite.config.ts                 # Configuração dos plugins do Vite (React, Babel e Tailwind)
 ```
 
 ---
