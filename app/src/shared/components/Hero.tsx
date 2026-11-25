@@ -1,11 +1,8 @@
 import type { FC } from "react";
 import { Button } from "../ui/Button";
+import { Link } from "react-router";
 
 export const Hero: FC = () => {
-  const handlePublishClick = () => {
-    alert("Publicar vaga por R$ 299. Formulário de publicação em breve!");
-  };
-
   return (
     <section className="pt-14 pb-12 sm:pt-20 sm:pb-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#e2e5e9]">
       <div className="max-w-3xl">
@@ -19,14 +16,11 @@ export const Hero: FC = () => {
         </p>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Button
-            id="btn-hero"
-            size="md"
-            variant="primary"
-            onClick={handlePublishClick}
-          >
-            Publicar vaga por R$ 299
-          </Button>
+          <Link to="/publish">
+            <Button id="btn-hero" size="md" variant="primary">
+              Publicar vaga por R$ 299
+            </Button>
+          </Link>
           <a
             href="#vagas"
             className="inline-flex items-center justify-center font-medium rounded-md text-sm px-4 py-2.5 text-[#5f6774] hover:text-[#0e1013] hover:bg-[#e2e5e9]/50 transition-colors"
