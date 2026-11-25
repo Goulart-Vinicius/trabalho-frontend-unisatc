@@ -6,10 +6,9 @@ import { Link } from "react-router";
 
 interface IJobCardProps {
   job: IJob;
-  onApply: (job: IJob) => void;
 }
 
-export const JobCard: FC<IJobCardProps> = ({ job, onApply }) => {
+export const JobCard: FC<IJobCardProps> = ({ job }) => {
   const titleId = `job-title-${job.id}`;
   const initials = job.company.slice(0, 2).toUpperCase();
 

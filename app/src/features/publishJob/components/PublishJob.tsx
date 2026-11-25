@@ -20,7 +20,7 @@ export const PublishJob: FC = () => {
   );
 
   if (isSubmitted && submittedData) {
-    return <PublishJobSuccess />;
+    return <PublishJobSuccess data={submittedData} />;
   }
 
   return (
