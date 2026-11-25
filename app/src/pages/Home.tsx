@@ -1,8 +1,8 @@
 import type { FC } from "react";
-import { Hero } from "../components/Hero";
-import { Jobs } from "../components/Jobs";
-import { Newsletter } from "../components/Newsletter";
-import { Testimonials } from "../components/Testimonials";
+import { Hero } from "../shared/components/Hero";
+import { Jobs } from "../features/jobs";
+import { Newsletter } from "../features/newsletter";
+import { Testimonials } from "../features/testimonials";
 
 export const Home: FC = () => {
   return (

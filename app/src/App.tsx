@@ -1,8 +1,7 @@
 import { lazy, Suspense, type FC } from "react";
 import { Routes, Route } from "react-router";
-import { Layout } from "./components/Layout";
+import { Layout } from "./shared/components/Layout";
 
-// Regra bundle-dynamic-imports e async-suspense-boundaries:
 // Carregamento dinâmico de páginas sob demanda com fallback visual
 const Home = lazy(() =>
   import("./pages/Home").then((module) => ({ default: module.Home })),
