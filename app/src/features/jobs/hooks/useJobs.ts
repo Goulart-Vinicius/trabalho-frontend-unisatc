@@ -51,11 +51,15 @@ export const useJobs = () => {
         id: Date.now(),
       };
 
-      setJobs((prev) => {
-        const updated = [...prev, jobWithId];
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-        return updated;
-      });
+      // Adiciona ao estado atual
+      setJobs((prev) => [...prev, jobWithId]);
+
+      // Salva apenas as vagas publicadas pelo usuário no localStorage
+      const saved = JSON.parse(
+        localStorage.getItem(STORAGE_KEY) || "[]"
+      ) as IJob[];
+      const updated = [...saved, jobWithId];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     },
     []
   );
