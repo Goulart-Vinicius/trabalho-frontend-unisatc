@@ -33,10 +33,6 @@ export const Vagas = () => {
     carregarVagas();
   }, []);
 
-  useEffect(() => {
-    document.title = `${filteredJobs.length} vagas | OpenBoard`;
-  }, [filteredJobs.length]);
-
   const toggleType = (type) => {
     setSelectedTypes((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
@@ -74,6 +70,10 @@ export const Vagas = () => {
   const counterLabel = `${filteredJobs.length} ${
     filteredJobs.length === 1 ? "vaga" : "vagas"
   } filtradas`;
+
+  useEffect(() => {
+    document.title = `${filteredJobs.length} vagas | OpenBoard`;
+  }, [filteredJobs.length]);
 
   if (loading) {
     return (
