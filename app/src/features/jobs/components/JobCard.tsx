@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { Button } from "../../../shared/ui/Button";
 import { Badge } from "../../../shared/ui/Badge";
 import { type IJob } from "../types/job";
+import { Link } from "react-router";
 
 interface IJobCardProps {
   job: IJob;
@@ -67,16 +68,16 @@ export const JobCard: FC<IJobCardProps> = ({ job, onApply }) => {
       </div>
 
       <div className="flex items-center justify-between md:justify-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-[#e2e5e9]/50 shrink-0">
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => onApply(job)}
-          aria-label={`Candidatar-se à vaga ${job.role} na empresa ${job.company}`}
-          className="w-full md:w-auto font-medium group-hover:border-[#0047ff] group-hover:text-[#0047ff]"
-        >
-          <span>Candidatar-se</span>
-          <span aria-hidden="true">→</span>
-        </Button>
+        <Link to={`/vagas/${job.id}`}>
+          <Button
+            size="sm"
+            variant="cobalt"
+            aria-label={`Ver detalhes da vaga ${job.role} na empresa ${job.company}`}
+            className="w-full md:w-auto font-medium"
+          >
+            Ver vaga
+          </Button>
+        </Link>
       </div>
     </article>
   );
